@@ -25,7 +25,7 @@ class Monitor extends EventEmitter {
     this.scope = scope;
     this.lastSync = - Number.MAX_VALUE;
     
-    if (typeof apiEndpointOrConnection === 'Connection') {
+    if (apiEndpointOrConnection instanceof Monitor.Pryv.Connection) {
       this.connection = apiEndpointOrConnection;
     } else {
       this.connection = new Monitor.Pryv.Connection(apiEndpointOrConnection);
@@ -84,6 +84,7 @@ class Monitor extends EventEmitter {
       this.updateMethod.ready();
     }
   }
+
 
   /**
    * Stop monitoring (no event will be fired anymore)

@@ -4,7 +4,14 @@
   "description": "Extends `pryv` lib-js with event driven notifications for changes on a Pryv.io account.",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --reporter spec  test/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pryv/lib-js-monitor"
+  },
+  "bugs": {
+    "url": "https://github.com/pryv/lib-js-monitor/issues"
   },
   "keywords": [
     "Pryv.io",
@@ -15,6 +22,8 @@
   "author": "Pryv S.A.",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "pryv": "^2.0.2"
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "pryv": "file:../lib-js"
   }
 }
