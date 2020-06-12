@@ -21,3 +21,8 @@ const monitor = new Pryv.Monitor(apiEndpoint || connection, scope, {method: 'tim
 	.start();
 
 ```
+
+
+### Know limitations
+
+- If an event's update makes it "out of scope". For example an (in scope) event streamIds[] property is "moved" to a streamId not convered by the scope. Current Pryv.io API does not provide the necessary snchronization mechanism to detect such change.
