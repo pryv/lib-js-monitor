@@ -1,9 +1,7 @@
 /**
  * Interface for UpdateMonitor
  * @memberof Pryv.Monitor
- * @constructor {Monitor~UpdateMethod} updateMethod.setMonitor - set once.
- * @param {Function} updateMethod.ready - 
- * @param {Function} updateMethod.close - c
+ * @constructor {Monitor~UpdateMethod} updateMethod.setMonitor - set once. c
  */
 class UpdateMethod {
   /**
@@ -16,10 +14,11 @@ class UpdateMethod {
   }
   /**
    * Called with no params, when all update tasks are done.
+   * Also used at "start" call
    */
   async ready() { }
   /**
-   * Called with no params, when monitor is closed: updater should be closed too.
+   * Called with no params, when monitor is stoped: updater should be stoped too.
    */
   async stop() { }
 }

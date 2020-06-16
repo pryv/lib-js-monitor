@@ -116,11 +116,11 @@ class Monitor extends EventEmitter {
    */
   setUpdateMethod(updateMethod) {
     if (this.updateMethod) {
-      try { this.updateMethod.close(); } catch (e) { };
+      try { this.updateMethod.stop(); } catch (e) { };
       this.updateMethod = null;
     }
-    if (updateMethod === null) return;
     this.updateMethod = updateMethod;
+    if (updateMethod === null) return;
     if (this.states.started) this.ready();
   }
 
