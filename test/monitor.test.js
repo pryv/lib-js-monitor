@@ -1,28 +1,18 @@
 /*global 
-  Pryv, chai, should, testData 
+  Pryv, chai, should, testData, conn, apiEndpoint, creaBaseStreams
 */
 
-const apiEndpoint = testData.pryvApiEndPoints[0];
-const conn = new Pryv.Connection(testData.pryvApiEndPoints[0]);
 
-const testStreamId = 'monitor-test';
 
 describe('Monitor', function () {
   this.timeout(3000);
 
-  before(async () => {
-    await conn.api([{
-      method: 'streams.create',
-      params: {
-        streamId: testStreamId,
-        name: testStreamId
-      }
-    }]);
+   before(async () => {
+     createBaseStreams();
   });
 
   describe('init', () => {
     it('can be initialized with an apiEndpoint', async () => {
-      console.log(apiEndpoint);
       const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
       await monitor.start();
     });
@@ -48,7 +38,7 @@ describe('Monitor', function () {
   describe('notifications', () => {
     let monitor = null;
     beforeEach(async () => {
-      monitor = new Pryv.Monitor(conn, { limit: 20 });
+      monitor = new Pryv.Monitor(conn, { limit: 1 });
     });
 
     afterEach(async () => {
@@ -72,7 +62,32 @@ describe('Monitor', function () {
         }
       ])
       await new Promise(r => setTimeout(r, 2000));
-      expect(count).to.be.gt(1);
+      expect(count).to.be.gt(0);
+    });
+
+    it('Detect new events added', async function () {
+      let count = 0; 
+      await monitor.start();
+
+      const eventData = {
+        streamId: testStreamId,
+        type: 'note/txt',
+        content: 'hello monitor ' + new Date()
+      };
+
+      monitor.on('event', function (event) {
+        expect(event.content).to.equal(eventData.content);
+        count++;
+      });
+      const res = await conn.api([
+        {
+          method: 'events.create',
+          params: eventData
+        }
+      ]);
+      await monitor.updateEvents(); // trigger refresh
+      await new Promise(r => setTimeout(r, 2000));
+      expect(count).to.be.gt(0);
     });
 
 

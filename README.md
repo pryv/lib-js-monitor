@@ -3,7 +3,7 @@
 Extends Pryv's [lib-js](https://github.com/pryv/lib-js) with event driven notifications for changes on a Pryv.io account.
 
 
-```
+```javascript
 const Pryv = require('pryv');
 require('@pryv/monitor')(Pryv);
 
@@ -14,13 +14,17 @@ const scope = {'streamIds': [diary]};
 
 // refresh the monitor using the 'timer' method with a refreshrate of 5 seconds
 
-const monitor = new Pryv.Monitor(apiEndpoint || connection, scope, {method: 'timer', ms: 5000})
-	.on('event', (event) => {}) // new or change
+const monitor = new Pryv.Monitor(apiEndpoint || connection, scope);
+monitor.on('event', (event) => {}) // new or change
 	.on('streams', (streams) => {}) // all streams structure
-	.on('eventDelete', (event) => {}) // an event need to be deleted
-	.start();
+	.on('eventDelete', (event) => {}); // an event need to be deleted
+
+monitor.start(); // start the monitor
+// add an autor refresh for events every 1000 ms
+new Pryv.Monitor.UpdateMethod.Timer(monitor, 1000);
 
 ```
+
 
 
 ### Know limitations

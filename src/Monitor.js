@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const Checks = require('./lib/Checks');
+const UpdateMethod = require('./UpdateMethod/');
 const _updateEvents = require('./lib/updateEvents');
 const _updateStreams = require('./lib/updateStreams');
 
@@ -11,43 +11,41 @@ class Monitor extends EventEmitter {
    * 
    * @param {(Pryv.PryvApiEndpoint|Pryv.Connection)} apiEndpointOrConnection ApiEnpoint or connection to use. 
    * @param {Pryv.Monitor.Scope} [scope={}] The Scope to monitor
-   * @param {Object} [options={method:'none'}]
-   * @param {('timer'|'socket.io'|'none')} options.method - method to auto update the monitor. To use socket.io '@pryv/socket.io' should have been loaded.
-   * @param {number} [options.ms] - time to update in milliseconds, mandatory if method is `timer` not used for others.
    */
-  constructor(apiEndpointOrConnection, scope = {}, options = { method: 'none' }) {
+  constructor(apiEndpointOrConnection, scope = {}) {
     super();
-    if (! Monitor.Pryv) {
+    if (!Monitor.Pryv) {
       throw new Error('package \'@pryv/monitor\' must loaded after package \'pryv\'');
     }
-    this.options = options;
-    this.updateMethod = Checks.options(this);
-    
+
     this.scope = { // default scope values
       fromTime: - Number.MAX_VALUE,
       toTime: Number.MAX_VALUE,
       modifiedSince: - Number.MAX_VALUE
     }
     Object.assign(this.scope, scope);
-    
+
     if (apiEndpointOrConnection instanceof Monitor.Pryv.Connection) {
       this.connection = apiEndpointOrConnection;
     } else {
       this.connection = new Monitor.Pryv.Connection(apiEndpointOrConnection);
     }
     this.states = {
-      started: false, 
+      started: false,
       starting: false, // in phase of initializing
       updatingEvents: false, // semaphore to prevent updating events in parallel
       updatingStreams: false, // semaphore to prevent updating streams in parallel
     };
+    //new UpdateMethod.Null(this);
+    this.setUpdateMethod(null);
   }
 
   /**
    * Start the monitor
+   * @returns {Monitor} this
    */
   async start() {
-    if (this.states.started || this.states.starting) return;
+    if (this.states.started || this.states.starting) return this;
     this.states.starting = true;
     await _updateStreams(this);
     await _updateEvents(this);
@@ -56,20 +54,23 @@ class Monitor extends EventEmitter {
     this.scope.state = 'all';
 
     this.states.starting = false;
-    this.states.started = true;  
-    this.updateMethod.ready();
+    this.states.started = true;
+    if (this.updateMethod)
+      this.updateMethod.ready();
+    return this;
   }
 
   /**
    * request and update of events
+   * @returns {Monitor} this
    */
   async updateEvents() {
-    if (! this.states.started) {
+    if (!this.states.started) {
       throw new Error('Start Monitor before calling update Events');
     }
     if (this.states.updatingEvents) { // semaphore
       this.states.updateEventRequired = true;
-      return;
+      return this;
     }
 
     this.states.updatingEvents = true;
@@ -81,21 +82,49 @@ class Monitor extends EventEmitter {
         this.updateEvents;
       }.bind(this), 1);
     } else {
-      this.updateMethod.ready(); // tell the update method that we are ready
+      if (this.states.started && this.updateMethod) // it might be stoped 
+        this.updateMethod.ready(); // tell the update method that we are ready
     }
+    return this;
   }
 
 
   /**
    * Stop monitoring (no event will be fired anymore)
+   * @returns {Monitor} this
    */
   stop() {
-    if (! this.states.started) return;
+    if (!this.states.started) return this;
     if (this.states.starting) throw new Error('Process is starting, wait for the end of initialization to stop it');
-    this.updateMethod.stop();
+    if (this.updateMethod)
+      this.updateMethod.stop();
     this.states.started = false;
+    return this;
+  }
+
+  /**
+   * Initialize the updateMethod with this Monitor
+   * @callback Monitor~UpdateMethod
+   * @param {Monitor} setMonitor 
+   */
+
+  /**
+   * @private
+   * Called my UpdateMethod to share cross references
+   * Set a custom update method
+   * @param {Monitor~UpdateMethod} updateMethod - the auto-update method
+   */
+  setUpdateMethod(updateMethod) {
+    if (this.updateMethod) {
+      try { this.updateMethod.close(); } catch (e) { };
+      this.updateMethod = null;
+    }
+    if (updateMethod === null) return;
+    this.updateMethod = updateMethod;
+    if (this.states.started) this.ready();
   }
 
 }
 
+Monitor.UpdateMethod = UpdateMethod;
 module.exports = Monitor;
