@@ -10,13 +10,12 @@ global.Pryv = Pryv;
 global.testData = testData; 
 global.should = chai.should();
 global.expect = chai.expect;
-
-global.apiEndpoint = apiEndpoint = testData.pryvApiEndPoints[0];
-global.conn = conn = new Pryv.Connection(testData.pryvApiEndPoints[0]);
 global.testStreamId = testStreamId = 'monitor-test';
 
-
-global.createBaseStreams = async () => {
+global.prepareAndcreateBaseStreams = async () => {
+  await testData.prepare();
+  global.apiEndpoint = testData.apiEndpointWithToken;
+  global.conn = new Pryv.Connection(apiEndpoint);
   const res = await conn.api([{
     method: 'streams.create',
     params: {

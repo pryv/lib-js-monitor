@@ -1,14 +1,15 @@
 /*global 
-  Pryv, chai, should, testData, conn, apiEndpoint, creaBaseStreams
+  Pryv, chai, should, testData, conn, apiEndpoint, prepareAndcreateBaseStreams
 */
 
-
+const Pryv = require("pryv");
 
 describe('Monitor', function () {
   this.timeout(3000);
 
-   before(async () => {
-     createBaseStreams();
+  before(async () => {
+      this.timeout(5000);
+      await prepareAndcreateBaseStreams();
   });
 
   describe('init', () => {

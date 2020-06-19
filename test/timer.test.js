@@ -2,7 +2,7 @@
   Pryv, chai, should, testData, conn, apiEndpoint, creaBaseStreams
 */
 
-const { pryvApiEndPoints } = require("pryv/test/test-data");
+const testData = require("pryv/test/test-data");
 const Pryv = require("pryv");
 
 
@@ -10,7 +10,7 @@ describe('Monitor + Timer', function () {
   this.timeout(3000);
 
   before(async () => {
-    await createBaseStreams();
+    await prepareAndcreateBaseStreams();
   });
 
   describe('init', () => {
