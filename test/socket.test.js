@@ -10,7 +10,8 @@ describe('Monitor + Socket.io', function () {
     await prepareAndcreateBaseStreams();
   });
 
-  describe('socket updates', () => {
+  describe('socket updates', function () {
+    this.timeout(5000);
     it('Detect new events added', async function () {
       const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
       new Pryv.Monitor.UpdateMethod.Socket(monitor);
@@ -27,6 +28,7 @@ describe('Monitor + Socket.io', function () {
         expect(event.content).to.equal(eventData.content);
         count++;
       });
+      await new Promise(r => setTimeout(r, 1000));
       const res = await conn.api([
         {
           method: 'events.create',

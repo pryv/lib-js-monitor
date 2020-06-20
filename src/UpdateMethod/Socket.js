@@ -11,11 +11,13 @@ class Socket extends UpdateMethod {
   }
 
   async ready() {
-    if (this.monitor.socket) return;
+    if (this.socket) return;
     this.socket = await this.monitor.connection.socket.open();
-    this.socket.on('eventsChanged', () => { this.monitor.updateEvents(); });
+    this.socket.on('eventsChanged', () => { 
+      this.monitor.updateEvents(); });
     this.socket.on('streamsChanged', () => { this.monitor.updateStreams(); });
-    this.socket.on('error', (error) => { this.monitor.emit(Changes.ERROR.error); });
+    this.socket.on('error', (error) => { 
+      this.monitor.emit(Changes.ERROR.error); });
   };
 
   async stop () {
