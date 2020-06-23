@@ -4,7 +4,9 @@
   "description": "Extends `pryv` lib-js with event driven notifications for changes on a Pryv.io account.",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha --reporter spec  test/*.test.js"
+    "test": "mocha --reporter spec  test/*.test.js",
+    "setup": "./scripts/setup-environment-dev.sh",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -14,17 +16,21 @@
     "url": "https://github.com/pryv/lib-js-monitor/issues"
   },
   "keywords": [
+    "Pryv",
     "Pryv.io",
-    "Notifcation",
+    "Notification",
     "Scope",
     "Monitor"
   ],
   "author": "Pryv S.A.",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "chai": "^4.2.0",
+    "copy-webpack-plugin": "^6.0.2",
     "mocha": "^8.0.1",
-    "pryv": "file:../lib-js",
-    "@pryv/socket.io": "file:../socket.io"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "chai": "^4.2.0",
+    "pryv": "^2.0.3",
+    "@pryv/socket.io": "^1.0.0"
   }
 }
