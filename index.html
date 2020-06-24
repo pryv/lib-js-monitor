@@ -15,6 +15,7 @@
 
   <title>Pryv Monitor - Javascript</title>
   <script src="https://api.pryv.com/lib-js/pryv.js"></script>
+  <script src="https://api.pryv.com/lib-js-socket.io/pryv-socket.io.js"></script>
   <script src="pryv-monitor.js"></script>
 </head>
 
@@ -44,13 +45,28 @@
         <button onClick='deleteNoteEvent()'>Trash event (2x to delete)</button>
       </div>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <h2 class="card-title">Console</h2>
-        <textarea id='console' cols=50 rows=20></textarea>
-        <br>
-        <small>Source code of this demo app on <a href="https://github.com/pryv/lib-js-monitor.io/blob/master/examples/index.html">GitHub</a></small>
-      </div>
+    <table width=100%>
+      <tr>
+        <td>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Console</h2>
+              <textarea id='console' cols=45 rows=20></textarea>
+          </div>
+        </td>
+        <td>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Monitor Events</h2>
+              <textarea id='monitor-console' cols=45 rows=20></textarea>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+    <br>
+    <small>Source code of this demo app on <a
+        href="https://github.com/pryv/lib-js-monitor.io/blob/master/examples/index.html">GitHub</a></small>
     </div>
 </body>
 
@@ -62,7 +78,8 @@
     $updateId = document.getElementById('update-id'),
     $updateContent = document.getElementById('update-content'),
     $deleteId = document.getElementById('delete-id'),
-    $console = document.getElementById('console');
+    $console = document.getElementById('console'),
+    $monitorConsole = document.getElementById('monitor-console');
 
   //-- Connection will be updated upon login
   var connection = null;
@@ -103,7 +120,6 @@
   }
 
   function resToJSON(res) {
-    console.log(res);
     if (res.error || (res.event == null)) {
       if (res.eventDeletion == null)
         return "Error: " + JSON.stringify(res);
@@ -155,6 +171,11 @@
     $console.scrollTop = $console.scrollHeight;
   }
 
+  function logToMonitor(text) {
+    $monitorConsole.value += text + '\n';
+    $monitorConsole.scrollTop = $console.scrollHeight;
+  }
+
   // following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/
   (async function () {
     const serviceInfoUrl = Pryv.Browser.serviceInfoFromUrl() || 'https://reg.pryv.me/service/info';
@@ -182,24 +203,27 @@
   function initializeMonitor() {
    new Pryv.Monitor(connection, { limit: 2 })
       .on(Pryv.Monitor.Changes.EVENT_DELETE, function (event) {
-        logToConsole("> Event-DELETE: " + event.id);
+        logToMonitor("> Event-DELETE: " + event.id);
       })
       .on(Pryv.Monitor.Changes.EVENT, function (event) {
-        logToConsole("> Event-CHANGE-or-ADD: " + event.id + '\n - ' + event.content);
+        logToMonitor("> Event-CHANGE-or-ADD: " + event.id + '\n - ' + event.content);
       })
       .on(Pryv.Monitor.Changes.STREAMS, function (streams) {
-        logToConsole('> Event-STREAMS');
+        logToMonitor('> Event-STREAMS');
       })
       .on(Pryv.Monitor.Changes.STOP, function () {
-        logToConsole('> Event-STOP');
+        logToMonitor('> Event-STOP');
       })
       .on(Pryv.Monitor.Changes.READY, function () {
-        logToConsole('> Event-READY');
+        logToMonitor('> Event-READY');
       })
       .on(Pryv.Monitor.Changes.ERROR, function (error) {
-        logToConsole('> Event-ERROR: \n' + error);
+        logToMonitor('> Event-ERROR: \n' + error);
       })
-      .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1000))
+      // uncomment / comment one of the two following line to switch 
+      // between Timer or Socket updater
+      //.addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(2000))
+      .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket())
       .start();
     logToConsole("# Monitor Started");
   }
