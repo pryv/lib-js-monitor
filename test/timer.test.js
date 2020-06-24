@@ -27,10 +27,17 @@ describe('Monitor + Timer', function () {
 
   describe('timer updates', () => {
     it('Detect new events added', async function () {
-      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
-      new Pryv.Monitor.UpdateMethod.Timer(monitor, '1');
-      let count = 0;
+      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 })
+        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1));
       await monitor.start();
+      let count = 0;
+
+     
+      // listener is added "after" so we don't get events loaded at start
+      monitor.on('event', function (event) {
+        expect(event.content).to.equal(eventData.content);
+        count++;
+      });
 
       const eventData = {
         streamId: testStreamId,
@@ -38,10 +45,6 @@ describe('Monitor + Timer', function () {
         content: 'hello monitor ' + new Date()
       };
 
-      monitor.on('event', function (event) {
-        expect(event.content).to.equal(eventData.content);
-        count++;
-      });
       const res = await conn.api([
         {
           method: 'events.create',
@@ -59,12 +62,18 @@ describe('Monitor + Timer', function () {
   describe('stop', () => {
     it('Monitor stops when requested', async function () {
       this.timeout(4000);
-      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
-      new Pryv.Monitor.UpdateMethod.Timer(monitor, '1');
-      let count = 0;
+      const monitor = await new Pryv.Monitor(apiEndpoint, { limit: 1 })
+        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1));
       await monitor.start();
+
+      let count = 0;
       await new Promise(r => setTimeout(r, 1000));
       monitor.stop();
+
+      // listener is added "after" so we don't get events loaded at start
+      monitor.on('event', function (event) {
+        count++;
+      });
 
       const eventData = {
         streamId: testStreamId,
@@ -72,9 +81,6 @@ describe('Monitor + Timer', function () {
         content: 'hello monitor ' + new Date()
       };
 
-      monitor.on('event', function (event) {
-        count++;
-      });
       const res = await conn.api([
         {
           method: 'events.create',

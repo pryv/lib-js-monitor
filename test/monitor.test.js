@@ -7,9 +7,9 @@ const Pryv = require("pryv");
 describe('Monitor', function () {
   this.timeout(3000);
 
-  before(async () => {
-      this.timeout(5000);
-      await prepareAndcreateBaseStreams();
+  before(async function () {
+    this.timeout(5000);
+    await prepareAndcreateBaseStreams();
   });
 
   describe('init', () => {

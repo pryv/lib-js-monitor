@@ -37,8 +37,6 @@ class Monitor extends EventEmitter {
       updatingEvents: false, // semaphore to prevent updating events in parallel
       updatingStreams: false, // semaphore to prevent updating streams in parallel
     };
-    //new UpdateMethod.Null(this);
-    this.setUpdateMethod(null);
   }
 
   /**
@@ -100,8 +98,6 @@ class Monitor extends EventEmitter {
   ready() {
     if (!this.states.started) return; // it might be stoped 
     this.emit(Changes.READY);
-    if (this.updateMethod) 
-      this.updateMethod.ready(); // tell the update method that we are ready
   }
 
 
@@ -113,14 +109,20 @@ class Monitor extends EventEmitter {
     if (!this.states.started) return this;
     if (this.states.starting) throw new Error('Process is starting, wait for the end of initialization to stop it');
     this.emit(Changes.STOP);
-    if (this.updateMethod)
-      this.updateMethod.stop();
     this.states.started = false;
     return this;
   }
 
   /**
-   * Initialize the updateMethod with this Monitor
+   * Used by updateMethods to be sure they can call updateXXX methods
+   * @property {Boolean} started - true is monitor is started
+   */
+  get started() {
+    return this.states.started;
+  }
+
+  /**
+   * Initialize the updateMethods with this Monitor
    * @callback Monitor~UpdateMethod
    * @param {Monitor} setMonitor 
    */
@@ -130,17 +132,15 @@ class Monitor extends EventEmitter {
    * Called my UpdateMethod to share cross references
    * Set a custom update method
    * @param {Monitor~UpdateMethod} updateMethod - the auto-update method
+   * @returns {Monitor} this
    */
-  setUpdateMethod(updateMethod) {
-    if (this.updateMethod) {
-      try { this.updateMethod.stop(); } catch (e) { };
-      this.updateMethod = null;
+  addUpdateMethod(updateMethod) {
+    if (false) {
+      throw new Error('Argument is not a valid UpdateMethod instance');
     }
-    this.updateMethod = updateMethod;
-    if (updateMethod === null) return;
-    if (this.states.started) this.ready();
+    updateMethod.setMonitor(this);
+    return this
   }
-
 }
 
 Monitor.UpdateMethod = UpdateMethod;

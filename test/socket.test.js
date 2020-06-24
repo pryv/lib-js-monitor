@@ -13,10 +13,11 @@ describe('Monitor + Socket.io', function () {
   describe('socket updates', function () {
     this.timeout(5000);
     it('Detect new events added', async function () {
-      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
-      new Pryv.Monitor.UpdateMethod.Socket(monitor);
-      let count = 0;
+      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 })
+        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket());
       await monitor.start();
+    
+      let count = 0;
 
       const eventData = {
         streamId: testStreamId,
@@ -46,10 +47,10 @@ describe('Monitor + Socket.io', function () {
   describe('stop', () => {
     it('Monitor stops when requested', async function () {
       this.timeout(4000);
-      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
-      new Pryv.Monitor.UpdateMethod.Socket(monitor);
-      let count = 0;
+      const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 }).
+        addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket());
       await monitor.start();
+      let count = 0;
       await new Promise(r => setTimeout(r, 1000));
       monitor.stop();
 

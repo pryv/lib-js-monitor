@@ -3,8 +3,8 @@ const Changes = require('../lib/Changes');
 
 class Socket extends UpdateMethod {
 
-  constructor(monitor) {
-    super(monitor);
+  constructor() {
+    super();
     if (!Pryv.Connection.SocketIO) {
       throw new Error('You should load package @pryv/socket.io to use monitor with websockets');
     }

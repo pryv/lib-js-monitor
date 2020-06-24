@@ -180,27 +180,27 @@
     *  
     */
   function initializeMonitor() {
-    monitor = new Pryv.Monitor(connection, { limit: 2 });
-    monitor.on(Pryv.Monitor.Changes.EVENT_DELETE, function (event) {
-      logToConsole("> Event-DELETE: " + event.id);
-    })
-    .on(Pryv.Monitor.Changes.EVENT, function (event) {
-      logToConsole("> Event-CHANGE-or-ADD: " + event.id + '\n - ' + event.content);
-    })
-    .on(Pryv.Monitor.Changes.STREAMS, function (streams) {
-      logToConsole('> Event-STREAMS');
-    })
-    .on(Pryv.Monitor.Changes.STOP, function () {
-      logToConsole('> Event-STOP');
-    })
-    .on(Pryv.Monitor.Changes.READY, function () {
-      logToConsole('> Event-READY');
-    })
-    .on(Pryv.Monitor.Changes.ERROR, function (error) {
-      logToConsole('> Event-ERROR: \n' + error);
-    });;
-    new Pryv.Monitor.UpdateMethod.Timer(monitor, 1000);
-    monitor.start();
+   new Pryv.Monitor(connection, { limit: 2 })
+      .on(Pryv.Monitor.Changes.EVENT_DELETE, function (event) {
+        logToConsole("> Event-DELETE: " + event.id);
+      })
+      .on(Pryv.Monitor.Changes.EVENT, function (event) {
+        logToConsole("> Event-CHANGE-or-ADD: " + event.id + '\n - ' + event.content);
+      })
+      .on(Pryv.Monitor.Changes.STREAMS, function (streams) {
+        logToConsole('> Event-STREAMS');
+      })
+      .on(Pryv.Monitor.Changes.STOP, function () {
+        logToConsole('> Event-STOP');
+      })
+      .on(Pryv.Monitor.Changes.READY, function () {
+        logToConsole('> Event-READY');
+      })
+      .on(Pryv.Monitor.Changes.ERROR, function (error) {
+        logToConsole('> Event-ERROR: \n' + error);
+      })
+      .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1000))
+      .start();
     logToConsole("# Monitor Started");
   }
 </script>

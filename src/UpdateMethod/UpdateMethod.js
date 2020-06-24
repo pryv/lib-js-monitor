@@ -1,3 +1,4 @@
+const Changes = require('../lib/Changes');
 /**
  * Interface for UpdateMonitor
  * @memberof Pryv.Monitor
@@ -8,16 +9,23 @@ class UpdateMethod {
    * 
    * @param {Monitor} monitor 
    */
-  constructor(monitor) { 
+  setMonitor(monitor) { 
     this.monitor = monitor;
-    monitor.setUpdateMethod(this);
+    monitor.on(Changes.READY, this.ready.bind(this));
+    monitor.on(Changes.STOP, this.stop.bind(this));
+    if (monitor.started) {
+      this.ready();
+    }
   }
+
   /**
+   * Should be overwritten by subclases
    * Called with no params, when all update tasks are done.
    * Also used at "start" call
    */
   async ready() { }
   /**
+   * Should be overwritten by subclases
    * Called with no params, when monitor is stoped: updater should be stoped too.
    */
   async stop() { }
