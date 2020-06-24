@@ -7,7 +7,9 @@ const Changes = {
   EVENT: 'event',
   EVENT_DELETE: 'eventDelete',
   STREAMS: 'streams',
-  ERROR: 'error'
+  ERROR: 'error',
+  READY: 'ready',
+  STOP: 'stop'
 };
 
 module.exports = Changes;

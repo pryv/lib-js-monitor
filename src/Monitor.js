@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const UpdateMethod = require('./UpdateMethod/');
 const _updateEvents = require('./lib/updateEvents');
 const _updateStreams = require('./lib/updateStreams');
+const Changes = require('./lib/Changes');
 
 /**
  * @memberof Pryv
@@ -55,8 +56,7 @@ class Monitor extends EventEmitter {
 
     this.states.starting = false;
     this.states.started = true;
-    if (this.updateMethod)
-      this.updateMethod.ready();
+    this.ready();
     return this;
   }
 
@@ -74,7 +74,11 @@ class Monitor extends EventEmitter {
     }
 
     this.states.updatingEvents = true;
-    await _updateEvents(this);
+    try {
+      await _updateEvents(this);
+    } catch (e) {
+      this.emit(Changes.ERROR, e);
+    }
     this.states.updatingEvents = false;
 
     if (this.states.updateEventRequired) { // if another event update is required
@@ -82,10 +86,22 @@ class Monitor extends EventEmitter {
         this.updateEvents;
       }.bind(this), 1);
     } else {
-      if (this.states.started && this.updateMethod) // it might be stoped 
-        this.updateMethod.ready(); // tell the update method that we are ready
+      this.ready();
     }
     return this;
+  }
+
+  /**
+   * @private
+   * Called after init phase and each updateEvents
+   * Advertise the update method or any listener that the Monitor is ready 
+   * for a next event update
+   */
+  ready() {
+    if (!this.states.started) return; // it might be stoped 
+    this.emit(Changes.READY);
+    if (this.updateMethod) 
+      this.updateMethod.ready(); // tell the update method that we are ready
   }
 
 
@@ -96,6 +112,7 @@ class Monitor extends EventEmitter {
   stop() {
     if (!this.states.started) return this;
     if (this.states.starting) throw new Error('Process is starting, wait for the end of initialization to stop it');
+    this.emit(Changes.STOP);
     if (this.updateMethod)
       this.updateMethod.stop();
     this.states.started = false;

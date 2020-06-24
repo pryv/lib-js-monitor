@@ -41,7 +41,7 @@
         
         <h5>Delete</h5>
         <input type='text' id='delete-id' placeholder='Event id' value='' />
-        <button onClick='deleteNoteEvent()'>Delete (trash) event</button>
+        <button onClick='deleteNoteEvent()'>Trash event (2x to delete)</button>
       </div>
     </div>
     <div class="card">
@@ -93,17 +93,21 @@
     if (state.id === Pryv.Browser.AuthStates.AUTHORIZED) {
       connection = new Pryv.Connection(state.apiEndpoint);
       logToConsole('# Auth succeeded for user ' + connection.apiEndpoint);
+      initializeMonitor();
     }
     if (state.id === Pryv.Browser.AuthStates.LOGOUT) {
       connection = null;
       logToConsole('# Logout');
+      closeMonitor();
     }
   }
 
   function resToJSON(res) {
     console.log(res);
     if (res.error || (res.event == null)) {
-      return "Error: " + JSON.stringify(res);
+      if (res.eventDeletion == null)
+        return "Error: " + JSON.stringify(res);
+       return res.eventDeletion.id;
     }
     return res.event.id;
   }
@@ -118,7 +122,7 @@
         content: $createContent.value
       }
     }]);
-    logToConsole('ACTION Creating event: ' + resToJSON(res[0]));
+    logToConsole('# ACTION Creating event: ' + resToJSON(res[0]));
   }
 
   async function updateNoteEvent() {
@@ -132,7 +136,7 @@
         }
       }
     }]);
-    logToConsole('ACTION Updating event: ' + resToJSON(res[0]));
+    logToConsole('# ACTION Updating event: ' + resToJSON(res[0]));
   }
 
   async function deleteNoteEvent() {
@@ -143,7 +147,7 @@
           id: $deleteId.value,
         }
       }]);
-      logToConsole('ACTION Deleting event: ' + resToJSON(res[0]));
+      logToConsole('# ACTION Deleting event: ' + resToJSON(res[0]));
     }
 
   function logToConsole(text) {
@@ -152,12 +156,52 @@
   }
 
   // following the APP GUIDELINES: https://api.pryv.com/guides/app-guidelines/
-  
-
-  // --- socket.io specific
   (async function () {
     const serviceInfoUrl = Pryv.Browser.serviceInfoFromUrl() || 'https://reg.pryv.me/service/info';
     var service = await Pryv.Browser.setupAuth(authSettings, serviceInfoUrl);
   })();
+
+   // --- monitor specific
+  let monitor = null;
+
+  /**
+   * close monitor 
+   */
+  function closeMonitor() {
+    if (monitor == null) return;
+    try {
+      monitor.close();
+    } catch (e) {}
+    monitor = null;
+    logToConsole("# Closed Monitor");
+  }
+
+   /**
+    *  
+    */
+  function initializeMonitor() {
+    monitor = new Pryv.Monitor(connection, { limit: 2 });
+    monitor.on(Pryv.Monitor.Changes.EVENT_DELETE, function (event) {
+      logToConsole("> Event-DELETE: " + event.id);
+    })
+    .on(Pryv.Monitor.Changes.EVENT, function (event) {
+      logToConsole("> Event-CHANGE-or-ADD: " + event.id + '\n - ' + event.content);
+    })
+    .on(Pryv.Monitor.Changes.STREAMS, function (streams) {
+      logToConsole('> Event-STREAMS');
+    })
+    .on(Pryv.Monitor.Changes.STOP, function () {
+      logToConsole('> Event-STOP');
+    })
+    .on(Pryv.Monitor.Changes.READY, function () {
+      logToConsole('> Event-READY');
+    })
+    .on(Pryv.Monitor.Changes.ERROR, function (error) {
+      logToConsole('> Event-ERROR: \n' + error);
+    });;
+    new Pryv.Monitor.UpdateMethod.Timer(monitor, 1000);
+    monitor.start();
+    logToConsole("# Monitor Started");
+  }
 </script>
 </html>

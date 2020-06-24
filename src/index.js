@@ -25,6 +25,8 @@ module.exports = function(Pryv) {
  * @property {string} EVENT_DELETE "eventDelete"
  * @property {string} STREAMS "streams"
  * @property {string} ERROR "error"
+ * @property {string} READY "ready"
+ * @property {string} STOP "stop"
  */
 
 
