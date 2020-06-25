@@ -11,20 +11,20 @@ class Monitor extends EventEmitter {
   /**
    * 
    * @param {(Pryv.PryvApiEndpoint|Pryv.Connection)} apiEndpointOrConnection ApiEnpoint or connection to use. 
-   * @param {Pryv.Monitor.Scope} [scope={}] The Scope to monitor
+   * @param {Pryv.Monitor.Scope} [eventsGetScope={}] The Scope to monitor
    */
-  constructor(apiEndpointOrConnection, scope = {}) {
+  constructor(apiEndpointOrConnection, eventsGetScope = {}) {
     super();
     if (!Monitor.Pryv) {
       throw new Error('package \'@pryv/monitor\' must loaded after package \'pryv\'');
     }
 
-    this.scope = { // default scope values
+    this.eventsGetScope = { // default eventsGetScope values
       fromTime: - Number.MAX_VALUE,
       toTime: Number.MAX_VALUE,
       modifiedSince: - Number.MAX_VALUE
     }
-    Object.assign(this.scope, scope);
+    Object.assign(this.eventsGetScope, eventsGetScope);
 
     if (apiEndpointOrConnection instanceof Monitor.Pryv.Connection) {
       this.connection = apiEndpointOrConnection;
@@ -48,9 +48,9 @@ class Monitor extends EventEmitter {
     this.states.starting = true;
     await _updateStreams(this);
     await _updateEvents(this);
-    // once initialized we for the scope to request also deletions 
-    this.scope.includeDeletions = true;
-    this.scope.state = 'all';
+    // once initialized we for the eventsGetScope to request also deletions
+    this.eventsGetScope.includeDeletions = true;
+    this.eventsGetScope.state = 'all';
 
     this.states.starting = false;
     this.states.started = true;
@@ -81,7 +81,7 @@ class Monitor extends EventEmitter {
 
     if (this.states.updateEventRequired) { // if another event update is required
       setTimeout(function () {
-        this.updateEvents;
+        this.updateEvents();
       }.bind(this), 1);
     } else {
       this.ready();

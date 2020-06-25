@@ -39,9 +39,9 @@ Once Monitor has been setup, `Pryv.Monitor` can be instanced.
 
       or a Pryv.Connection see: [js-lib Connection](https://github.com/pryv/lib-js#obtaining-a-pryvconnection)
 
-  	2. a scope as per: [events.get parameters](https://api.pryv.com/reference/#get-events)
+  	2. a eventsGetScope as per: [events.get parameters](https://api.pryv.com/reference/#get-events)
 
-  `new Pryv.Monitor({apiEndpoint | connection}, scope)`
+  `new Pryv.Monitor({apiEndpoint | connection}, eventsGetScope)`
 
   ​	
 
@@ -51,12 +51,12 @@ Once Monitor has been setup, `Pryv.Monitor` can be instanced.
 ```javascript
 const apiEndpoint = 'https://ck6bwmcar00041ep87c8ujf90@drtom.pryv.me';
 
-// reduce the scope of the monitor to the stream: diary
-const scope = {'streamIds': [diary]};
+// reduce the eventsGetScope of the monitor to the stream: diary
+const eventsGetScope = {'streamIds': [diary]};
 
 // refresh the monitor using the 'timer' method with a refreshrate of 5 seconds
 
-const monitor = new Pryv.Monitor(apiEndpoint || connection, scope)
+const monitor = new Pryv.Monitor(apiEndpoint || connection, eventsGetScope)
 	.on('event', (event) => {}) // new or change
 	.on('streams', (streams) => {}) // all streams structure
 	.on('eventDelete', (event) => {}) // an event need to be deleted
@@ -71,7 +71,7 @@ Chain (async) `.start()`
 
 ```javascript
 (async () => { 
-	const monitor = await (new Pryv.Monitor(apiEndpoint || connection, scope)
+	const monitor = await (new Pryv.Monitor(apiEndpoint || connection, eventsGetScope)
 		.on('event', (event) => {})))
 		.start();
 })();
@@ -95,4 +95,4 @@ It can be tested on [http://pryv.github.io/lib-js-monitor](http://pryv.github.io
 
 ### Know limitations
 
-- If an event's update makes it "out of scope". For example an (in scope) event streamIds[] property is "moved" to a streamId not convered by the scope. Current Pryv.io API does not provide the necessary snchronization mechanism to detect such change.
+- If an event's update makes it "out of eventsGetScope". For example an (in eventsGetScope) event streamIds[] property is "moved" to a streamId not convered by the eventsGetScope. Current Pryv.io API does not provide the necessary snchronization mechanism to detect such change.

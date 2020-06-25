@@ -1,3 +1,4 @@
+
 const UpdateMethod = require('./UpdateMethod');
 const Changes = require('../lib/Changes');
 
@@ -5,13 +6,14 @@ class Socket extends UpdateMethod {
 
   constructor() {
     super();
-    if (!Pryv.Connection.SocketIO) {
-      throw new Error('You should load package @pryv/socket.io to use monitor with websockets');
-    }
+    
   }
 
   async ready() {
     if (this.socket) return;
+    if (!this.monitor.connection.socket) {
+      throw new Error('You should load package @pryv/socket.io to use monitor with websockets');
+    }
     this.socket = await this.monitor.connection.socket.open();
     this.socket.on('eventsChanged', () => { 
       this.monitor.updateEvents(); });

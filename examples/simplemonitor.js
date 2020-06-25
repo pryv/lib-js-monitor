@@ -1,4 +1,5 @@
 const Pryv = require('pryv');
+require('@pryv/socket.io')(Pryv);
 require('../src/')(Pryv);
 
 const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
@@ -23,7 +24,8 @@ const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
     .on(Pryv.Monitor.Changes.ERROR, function (error) {
       console.log('> Event-ERROR: \n' + error);
     })
-    .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1000))
+    //.addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1000))
+    .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket())
   ).start();
 })();
 
