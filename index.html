@@ -221,8 +221,8 @@
         logToMonitor('> Event-ERROR: \n' + error);
       })
       // uncomment / comment one of the two following line to switch 
-      // between Timer or Socket updater
-      //.addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(2000))
+      // between EventsTimer or Socket updater
+      //.addUpdateMethod(new Pryv.Monitor.UpdateMethod.EventsTimer(2000))
       .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Socket())
       .start();
     logToConsole("# Monitor Started");
