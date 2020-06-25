@@ -73,6 +73,7 @@ class Monitor extends EventEmitter {
 
     this.states.updatingEvents = true;
     try {
+      this.states.updateEventRequired = false;
       await _updateEvents(this);
     } catch (e) {
       this.emit(Changes.ERROR, e);
@@ -82,6 +83,38 @@ class Monitor extends EventEmitter {
     if (this.states.updateEventRequired) { // if another event update is required
       setTimeout(function () {
         this.updateEvents();
+      }.bind(this), 1);
+    } else {
+      this.ready();
+    }
+    return this;
+  }
+
+  /**
+   * request and update of streams
+   * @returns {Monitor} this
+   */
+  async updateStreams() {
+    if (!this.states.started) {
+      throw new Error('Start Monitor before calling update Streams');
+    }
+    if (this.states.updatingStreams) { // semaphore
+      this.states.updateStreamsRequired = true;
+      return this;
+    }
+
+    this.states.updatingStreams = true;
+    try {
+      this.states.updateStreamsRequired = false;
+      await _updateStreams(this);
+    } catch (e) {
+      this.emit(Changes.ERROR, e);
+    }
+    this.states.updatingStreams = false;
+
+    if (this.states.updateStreamsRequired) { // if another streams update is required
+      setTimeout(function () {
+        this.updateStreams();
       }.bind(this), 1);
     } else {
       this.ready();

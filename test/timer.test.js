@@ -6,7 +6,7 @@ const testData = require("pryv/test/test-data");
 const Pryv = require("pryv");
 
 
-describe('Monitor + Timer', function () {
+describe('Monitor + EventsTimer', function () {
   this.timeout(3000);
 
   before(async () => {
@@ -17,7 +17,7 @@ describe('Monitor + Timer', function () {
     it('throw error if timer is not inistialized with correct time', async () => {
       const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 });
       try {
-        new Pryv.Monitor.UpdateMethod.Timer(monitor, 'Rt');
+        new Pryv.Monitor.UpdateMethod.EventsTimer(monitor, 'Rt');
       } catch (e) {
         return expect(e.message).to.equal('Monitor timer refresh rate is not valid. It should be a number > 1');
       }
@@ -28,7 +28,7 @@ describe('Monitor + Timer', function () {
   describe('timer updates', () => {
     it('Detect new events added', async function () {
       const monitor = new Pryv.Monitor(apiEndpoint, { limit: 1 })
-        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1));
+        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.EventsTimer(1));
       await monitor.start();
       let count = 0;
 
@@ -63,7 +63,7 @@ describe('Monitor + Timer', function () {
     it('Monitor stops when requested', async function () {
       this.timeout(4000);
       const monitor = await new Pryv.Monitor(apiEndpoint, { limit: 1 })
-        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.Timer(1));
+        .addUpdateMethod(new Pryv.Monitor.UpdateMethod.EventsTimer(1));
       await monitor.start();
 
       let count = 0;

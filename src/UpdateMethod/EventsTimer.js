@@ -1,7 +1,6 @@
 const UpdateMethod = require('./UpdateMethod');
 
-class Timer extends UpdateMethod {
-
+class EventsTimer extends UpdateMethod {
   /**
    * @param {Number} updateRateMS - the refresh rate in milliseconds
    */
@@ -22,5 +21,4 @@ class Timer extends UpdateMethod {
   }
 }
 
-
-module.exports = Timer;
+module.exports = EventsTimer;
