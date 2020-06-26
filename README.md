@@ -49,38 +49,38 @@ Once Monitor has been set up, `Pryv.Monitor` can be instanced.
 
   they are registered using `monitor.on({event}, {callback})`
 
-  **Triggerer events are:**
+  **The monitor emits following events:**
 
-  - `event`: Fired for every **new** event and **change** on a event. 
+  - `event`: on every **new** Pryv event and **change** on a Pryv event. 
 
-    callback argument: the event
+    callback argument: the Pryv event
 
-  - `eventDeleted`: Fired when an event is deleted.
+  - `eventDeleted`: on Pryv event deletion
 
-    callback argument: `{id: "...."}` the id of the deleted event. 
+    callback argument: `{id: "...."}` the id of the deleted Pryv event. 
 
-  - `streams`: Fired when there is a change (new, deletion, update) on the stream structure.
+  - `streams`: on change (new, deletion, update) in the Pryv stream structure.
 
     callback argument: `{streams: ...}` as per [API: streams.get](https://api.pryv.com/reference/#get-streams) 
 
-  - `error`: Fired on error
+  - `error`: on error
     callback argument: The error or an error message.
 
-  - `ready`: Fired when the monitor is ready. (For internal and UpdateMethod usage)
+  - `ready`: Emitted when the monitor is ready. (For internal and UpdateMethod usage)
 
-  - `stop`: When the monitor stops.  
+  - `stop`: When the monitor stops.
 
 - **Start monitoring:** `await monitor.start()` 
 
-  When starting, the monitor will fetch all the dataset covered by the `eventsGetScope` and trigger the changes event accordingly.
+  When starting, the monitor will fetch entire dataset covered by the `eventsGetScope` and trigger the changes event accordingly.
 
 - **Trigger events update:** `await monitor.updateEvents()`
 
-  This will push a request an events update in the task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
+  This will push a request to update Pryv events into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
 
 - **Trigger streams update: **`await monitor.updateStreams()`
 
-  This will push a request a streams update in the task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
+  This will push a request to update Pryv streams into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
 
 - **Add an autoupdate method:** `monitor.addUpdateMethod({UpdateMethod})`
 
