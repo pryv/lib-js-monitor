@@ -25,12 +25,10 @@
   "author": "Pryv S.A.",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "copy-webpack-plugin": "^6.0.2",
     "mocha": "^8.0.1",
-    "webpack": "^4.20.2",
-    "webpack-cli": "^3.1.2",
     "chai": "^4.2.0",
     "pryv": "^2.0.3",
-    "@pryv/socket.io": "^1.0.0"
+    "@pryv/socket.io": "^1.0.0",
+    "@pryv/lib-js-common": "git+https://github.com/pryv/lib-js-common.git"
   }
 }

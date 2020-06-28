@@ -172,6 +172,11 @@ const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
 </script>
 ```
 
+#### Others distributions for browsers:
+
+- ES6: `https://api.pryv.com/lib-js-monitor/pryv-monitor-es6.js` 
+- Socket.io + Monitor + Lib-js: `https://api.pryv.com/lib-js/pryv-socket.io-monitor.js`. 
+
 ### Example web app
 
 ![Screenshot](https://raw.githubusercontent.com/pryv/lib-js-monitor/master/examples/screenshot.png)
