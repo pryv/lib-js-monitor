@@ -4,13 +4,13 @@ Extends Pryv's [lib-js](https://github.com/pryv/lib-js) with event driven notifi
 
 ## Setup
 
-This library extends the `Pryv.Connection` class with a `Pryv.Monitor` class.
+This library extends `Pryv` with a `Pryv.Monitor` class.
 
 ### Node.js
 
 `npm install pryv @pryv/monitor`
 
-In you project files, load it **once only**. The Pryv javascript package will be patched with monitor capabilities.
+In your project files, load it **once only**. The Pryv javascript package will be patched with monitor capabilities.
 
 ```javascript
 const Pryv = require('pryv');
@@ -21,19 +21,25 @@ require('@pryv/monitor')(Pryv);
 
 Note: `pryv-monitor.js` must be loaded **after** `pryv.js`
 
-
 ```html
 <script src="https://api.pryv.com/lib-js/pryv.js"></script>
 <script src="https://api.pryv.com/lib-js-monitor/pryv-monitor.js"></script>
 ```
 
+// TODO:  add part about bundle
+
+#### Others distributions for browsers:
+
+- ES6: `https://api.pryv.com/lib-js-monitor/pryv-monitor-es6.js` 
+- Socket.io + Monitor + Lib-js: `https://api.pryv.com/lib-js/pryv-socket.io-monitor.js`. 
+
 ## Usage
 
-Once Monitor has been set up, `Pryv.Monitor` can be instanced.
+Once Monitor has been set up, `Pryv.Monitor` can be instantiated.
 
-- **Create a new Monitor**
+### Monitor
 
-  It takes two arguments
+#### Arguments
 
    1. an apiEndpointUrl see: [Basics - ApiEnpoint](https://api.pryv.com/reference/#api-endpoint)
 
@@ -47,11 +53,11 @@ Once Monitor has been set up, `Pryv.Monitor` can be instanced.
 
   `Monitor` extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)
 
-  they are registered using `monitor.on({event}, {callback})`
+  You can register to them using `monitor.on({event}, {callback})`
 
-  **The monitor emits following events:**
+  **Events:**
 
-  - `event`: on every **new** Pryv event and **change** on a Pryv event. 
+  - `event`: on every Pryv event **creation** and **change**.
 
     callback argument: the Pryv event
 
@@ -64,6 +70,7 @@ Once Monitor has been set up, `Pryv.Monitor` can be instanced.
     callback argument: `{streams: ...}` as per [API: streams.get](https://api.pryv.com/reference/#get-streams) 
 
   - `error`: on error
+
     callback argument: The error or an error message.
 
   - `ready`: Emitted when the monitor is ready. (For internal and UpdateMethod usage)
@@ -74,7 +81,7 @@ Once Monitor has been set up, `Pryv.Monitor` can be instanced.
 
   When starting, the monitor will fetch entire dataset covered by the `eventsGetScope` and trigger the changes event accordingly.
 
-- **Trigger events update:** `await monitor.updateEvents()`
+- **Trigger Pryv events update:** `await monitor.updateEvents()`
 
   This will push a request to update Pryv events into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
 
@@ -172,10 +179,7 @@ const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
 </script>
 ```
 
-#### Others distributions for browsers:
 
-- ES6: `https://api.pryv.com/lib-js-monitor/pryv-monitor-es6.js` 
-- Socket.io + Monitor + Lib-js: `https://api.pryv.com/lib-js/pryv-socket.io-monitor.js`. 
 
 ### Example web app
 
