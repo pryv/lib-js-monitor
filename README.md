@@ -39,77 +39,72 @@ Once Monitor has been set up, `Pryv.Monitor` can be instantiated.
 
 ### Monitor
 
-#### Arguments
+#### `new Pryv.Monitor({apiEndpoint | connection}, eventsGetScope)`
 
-   1. an apiEndpointUrl see: [Basics - ApiEnpoint](https://api.pryv.com/reference/#api-endpoint)
+**Arguments**
 
-      or a Pryv.Connection see: [js-lib Connection](https://github.com/pryv/lib-js#obtaining-a-pryvconnection)
+      1. `apiEndpointUrl` see: [Basics - ApiEnpoint](https://api.pryv.com/reference/#api-endpoint) or a `Pryv.Connection` see: [js-lib Connection](https://github.com/pryv/lib-js#obtaining-a-pryvconnection)
+  2. `eventsGetScope` object as per: [events.get parameters](https://api.pryv.com/reference/#get-events)
 
-  2. an eventsGetScope as per: [events.get parameters](https://api.pryv.com/reference/#get-events)
+#### `monitor.on({key}, {callback})` register event listeners
 
-  `new Pryv.Monitor({apiEndpoint | connection}, eventsGetScope)`
+`Monitor` extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)
 
-- **Register event listeners for changes on the eventsGetScope**
+List of possible `{key}` value.
 
-  `Monitor` extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)
+- `event`: on every Pryv event **creation** and **change** on the scope (eventsGetScope)
 
-  You can register to them using `monitor.on({event}, {callback})`
+  callback argument: the Pryv event
 
-  **Events:**
+- `eventDeleted`: on Pryv event deletion
 
-  - `event`: on every Pryv event **creation** and **change**.
+  callback argument: `{id: "...."}` the id of the deleted Pryv event. 
 
-    callback argument: the Pryv event
+- `streams`: on change (new, deletion, update) in the Pryv stream structure.
 
-  - `eventDeleted`: on Pryv event deletion
+  callback argument: `{streams: ...}` as per [API: streams.get](https://api.pryv.com/reference/#get-streams) 
 
-    callback argument: `{id: "...."}` the id of the deleted Pryv event. 
+- `error`: on error
 
-  - `streams`: on change (new, deletion, update) in the Pryv stream structure.
+  callback argument: The error or an error message.
 
-    callback argument: `{streams: ...}` as per [API: streams.get](https://api.pryv.com/reference/#get-streams) 
+- `ready`: Emitted when the monitor is ready. (For internal and UpdateMethod usage)
 
-  - `error`: on error
+- `stop`: When the monitor stops.
 
-    callback argument: The error or an error message.
+#### `monitor.start()` (async) Start monitoring
 
-  - `ready`: Emitted when the monitor is ready. (For internal and UpdateMethod usage)
+When starting, the monitor will fetch entire dataset covered by the `eventsGetScope` and trigger the changes event accordingly.
 
-  - `stop`: When the monitor stops.
+#### `monitor.updateEvents()` Trigger Pryv events update
 
-- **Start monitoring:** `await monitor.start()` 
+This will push a request to update Pryv events into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
 
-  When starting, the monitor will fetch entire dataset covered by the `eventsGetScope` and trigger the changes event accordingly.
+#### `monitor.updateStreams()` Trigger streams update
 
-- **Trigger Pryv events update:** `await monitor.updateEvents()`
+This will push a request to update Pryv streams into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
 
-  This will push a request to update Pryv events into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
+#### `monitor.addUpdateMethod({UpdateMethod})` Add an autoupdate method
 
-- **Trigger streams update: **`await monitor.updateStreams()`
+Update methods can be triggered automatically with:
 
-  This will push a request to update Pryv streams into task stack. It will be activated as soon as the monitor has finalized eventual pending tasks.
+- **EventsTimer** `new Pryv.Monitor.UpdateMethod.EventsTimer({ms})`
 
-- **Add an autoupdate method:** `monitor.addUpdateMethod({UpdateMethod})`
+  This will call `monitor.updateEvents()` regularly at a rate `{ms}` in milliseconds.
+  (It has no real value but for demonstrative purposes)
 
-  Update methods can be triggered automatically with:
+- **Socket** `new Pryv.Monitor.UpdateMethod.Socket()` 
 
-  - **EventsTimer** `new Pryv.Monitor.UpdateMethod.EventsTimer({ms})`
+  Based on websokets, it uses [lib-js-socket.io](https://github.com/pryv/lib-js-socket.io) to relay notification from Pryv.io to the monitor.
 
-    This will call `monitor.updateEvents()` regularly at a rate `{ms}` in milliseconds.
-    (It has no real value but for demonstrative purposes)
-  
-  - **Socket** `new Pryv.Monitor.UpdateMethod.Socket()` 
-  
-    Based on websokets, it uses [lib-js-socket.io](https://github.com/pryv/lib-js-socket.io) to relay notification from Pryv.io to the monitor.
-  
-  - **Custom** 
-    You can design your own UpdateMethod by extending [UpdateMethod](https://github.com/pryv/lib-js-monitor/blob/master/src/UpdateMethod/UpdateMethod.js) class.
-  
-- **Stop monitoring:** `monitor.stop()`
+- **Custom** 
+  You can design your own UpdateMethod by extending [UpdateMethod](https://github.com/pryv/lib-js-monitor/blob/master/src/UpdateMethod/UpdateMethod.js) class.
 
-  The monitor will stop auto updaters and will throw errors if `updateEvents` or `updateStreams` is called.
+#### `monitor.stop()` Stop monitoring
 
-  A monitor can be restarted.
+The monitor will stop auto updaters and will throw errors if `updateEvents` or `updateStreams` is called.
+
+A monitor can be restarted.
 
 ## Example
 
