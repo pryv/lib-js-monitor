@@ -26,12 +26,10 @@ Note: `pryv-monitor.js` must be loaded **after** `pryv.js`
 <script src="https://api.pryv.com/lib-js-monitor/pryv-monitor.js"></script>
 ```
 
-// TODO:  add part about bundle
-
 #### Others distributions for browsers:
 
 - ES6: `https://api.pryv.com/lib-js-monitor/pryv-monitor-es6.js` 
-- Socket.io + Monitor + Lib-js: `https://api.pryv.com/lib-js/pryv-socket.io-monitor.js`. 
+- Bundle: (Socket.io + Monitor + Lib-js) `https://api.pryv.com/lib-js/pryv-socket.io-monitor.js`. 
 
 ## Usage
 
