@@ -178,7 +178,7 @@ const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
 
 ### Example web app
 
-![Screenshot](https://raw.githubusercontent.com/pryv/lib-js-monitor/master/examples/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/pryv/lib-js-monitor/master/examples/screenshot.png?token=AAD5VZS6YDZVGRYXY23X6QK7ASAM2)
 
 The `./examples/index.html` file is a simple demo app that allows loging in a Pryv.io platform, register to events changes and create notes. 
 
