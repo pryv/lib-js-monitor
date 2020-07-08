@@ -27,8 +27,8 @@
   "devDependencies": {
     "mocha": "^8.0.1",
     "chai": "^4.2.0",
-    "pryv": "^2.0.3",
+    "pryv": "^2.0.4",
     "@pryv/socket.io": "^1.0.0",
-    "@pryv/lib-js-common": "git+https://github.com/pryv/lib-js-common.git"
+    "@pryv/lib-js-common": "git+https://github.com/pryv/lib-js-common.git#1.0.1"
   }
 }

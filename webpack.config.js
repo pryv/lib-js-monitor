@@ -17,7 +17,7 @@ module.exports = [
 	{ // es5  version
 		mode: 'production',
 		entry: {
-			'pryv-monitor': './src/browser-index.js'
+			'pryv-monitor': ['core-js/stable','./src/browser-index.js']
 		},
 		output: {
 			filename: '[name].js',
