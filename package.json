@@ -1,6 +1,6 @@
 {
   "name": "@pryv/monitor",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Extends `pryv` lib-js with event driven notifications for changes on a Pryv.io account.",
   "main": "src/index.js",
   "scripts": {
