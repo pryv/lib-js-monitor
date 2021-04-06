@@ -1,6 +1,6 @@
 {
   "name": "@pryv/monitor",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Extends `pryv` lib-js with event driven notifications for changes on a Pryv.io account.",
   "main": "src/index.js",
   "scripts": {
@@ -25,7 +25,7 @@
   "author": "Pryv S.A.",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@pryv/lib-js-common": "git+https://github.com/pryv/lib-js-common.git#1.0.2",
+    "@pryv/lib-js-common": "git+https://github.com/pryv/lib-js-common.git#1.0.3",
     "@pryv/socket.io": "^1.0.2",
     "chai": "^4.2.0",
     "mocha": "^8.2.1",
