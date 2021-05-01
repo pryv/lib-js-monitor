@@ -122,19 +122,19 @@ new Pryv.Monitor.UpdateMethod.EventsTimer({ms})
 ```
 
 This will call `monitor.updateEvents()` regularly at a rate `{ms}` in milliseconds (It has no real world but for demonstrative purposes).
-  
+
 - **Socket**
 
 ```javascript
 new Pryv.Monitor.UpdateMethod.Socket()
 ```
-  
+
 Based on websockets, it uses [lib-js-socket.io](https://github.com/pryv/lib-js-socket.io) to relay notification from Pryv.io to the monitor.
-  
+
 - **Custom**
 
 You can design your own UpdateMethod by extending the [UpdateMethod](https://github.com/pryv/lib-js-monitor/blob/master/src/UpdateMethod/UpdateMethod.js) class.
-  
+
 #### Stop monitoring
 
 ```javascript
@@ -181,10 +181,12 @@ Chain (async) `.start()`
 
 #### Node.js
 
+Install packages: `npm install pryv @pryv/socket.io @pryv/monitor`
+
 ```javascript
 const Pryv = require('pryv');
 require('@pryv/socket.io')(Pryv);
-require('../src/')(Pryv);
+require('@pryv/monitor')(Pryv);
 
 const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
 (async () => { 
@@ -201,6 +203,10 @@ const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
 <script src="https://api.pryv.com/lib-js/pryv.js"></script>
 <script src="https://api.pryv.com/lib-js-socket.io/pryv-socket.io.js"></script>
 <script src="https://api.pryv.com/lib-js-monitor/pryv-monitor.js"></script>
+<!-- 
+Previous lines can be replaced by a single "bundle"
+<script src="https://api.pryv.com/lib-js/pryv-socket.io-monitor.js"></script>
+-->
 
 <script>
 const apiEndpoint = 'https://ck60yn9yv00011hd3vu1ocpi7@jslibtest.pryv.me';
