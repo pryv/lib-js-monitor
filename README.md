@@ -1,3 +1,7 @@
+**⚠️ This add-on is now part of [the main library's repository](https://github.com/pryv/lib-js). This repository is kept as archive for now.**
+
+---
+
 # Monitor add-on for Pryv lib-js
 
 Extends Pryv's [lib-js](https://github.com/pryv/lib-js) with event driven notifications for changes on a Pryv.io account.
